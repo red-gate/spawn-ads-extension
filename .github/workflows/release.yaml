@@ -26,6 +26,7 @@ jobs:
           fi
 
           echo '::set-output name=RELEASE_VERSION_NUM::$package_json_version_num'
+      - run: npm install
       - name: Run vsce package
         uses: lannonbr/vsce-action@2.0.0
         with:
