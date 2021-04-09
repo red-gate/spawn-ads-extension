@@ -1,0 +1,50 @@
+name: Release
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  release:
+    name: Create release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Validate tag matches package.json version
+        id: release_version
+        run: |
+          github_tag_version_num="${GITHUB_REF/refs\/tags\/v/}"
+
+          package_json_version_num="$(cat package.json | jq '.version' -r)"
+
+          if [[ "${github_tag_version_num}" != "${package_json_version_num}" ]]; then
+            echo "ERROR: GitHub tag version and version in package.json are different"
+            echo "GitHub tag version: $github_tag_version_num"
+            echo "package json version: $package_json_version_num"
+            exit 1
+          fi
+
+          echo '::set-output name=RELEASE_VERSION_NUM::$package_json_version_num'
+      - name: Run vsce package
+        uses: lannonbr/vsce-action@2.0.0
+        with:
+          args: "package"
+      - name: Create GitHub release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ steps.release_version.outputs.RELEASE_VERSION_NUM }}
+          draft: false
+      - name: upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./redgate-spawn-${{ steps.release_version.outputs.RELEASE_VERSION_NUM }}.vsix
+          asset_name: redgate-spawn-${{ steps.release_version.outputs.RELEASE_VERSION_NUM }}.vsix
+          asset_content_type: application/zip
