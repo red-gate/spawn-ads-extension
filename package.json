@@ -1,0 +1,61 @@
+{
+    "name": "redgate-spawn",
+    "displayName": "Spawn",
+    "description": "Provides quick connections to Spawn data containers",
+    "version": "0.0.1",
+    "preview": true,
+    "private": true,
+    "license": "Apache 2.0",
+    "publisher": "Redgate",
+    "homepage": "https://spawn.cc",
+    "icon": "images/spawn_logo.png",
+    "extensionDependencies": [
+        "microsoft.azuredatastudio-postgresql"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/red-gate/spawn-ads-extension"
+    },
+    "bugs": {
+        "url": "https://github.com/red-gate/spawn-ads-extension/issues"
+    },
+    "engines": {
+        "vscode": "^1.26.1",
+        "azdata": "*"
+    },
+    "categories": [
+        "Other"
+    ],
+    "keywords": [
+        "Spawn",
+        "Redgate",
+        "Data Container",
+        "Ephemeral"
+    ],
+    "activationEvents": [
+        "onCommand:extension.connectSpawnDataContainer"
+    ],
+    "main": "./extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "extension.connectSpawnDataContainer",
+                "title": "Connect to a Spawn Data Container",
+                "category": "Spawn"
+            }
+        ]
+    },
+    "scripts": {
+        "test": "node ./node_modules/vscode/bin/test",
+        "package": "vsce package"
+    },
+    "devDependencies": {
+        "azdata": "^1.0.0",
+        "vsce": "^1.87.1",
+        "vscode": "^1.1.30"
+    },
+    "dependencies": {
+        "uuid": "^3.3.2",
+        "which": "^1.3.1"
+    }
+}
